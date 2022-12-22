@@ -69,13 +69,11 @@
                 if (monitorDiv.clientWidth < monitorDiv.clientHeight) {
                     canvas.width = height;
                     canvas.height = width;
-                    document.webkitExitFullscreen();       
                 } else {
                     canvas.width = width;
                     canvas.height = height;
-                    document.webkitRequestFullscreen();
-                }        
-        
+                }                
+
                 // Draw test on canvas
                 const ctx = canvas.getContext('2d');
 
