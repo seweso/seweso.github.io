@@ -24,16 +24,15 @@
 
             // Mouse move
             function handleMove(event) {
+                var zoomX = event.target.width / event.target.clientWidth;
                 if (event.type === "mousemove") {
-                    x = event.offsetX;
-                    y = event.offsetY;
-                    console.log("Mouse position: (" + x + ", " + y + ")");
+                    x = event.offsetX * zoomX;
+                    y = event.offsetY * zoomX;
                 } else if (event.type === "touchmove") {
                     var touch = event.touches[0];
                     var rect = event.target.getBoundingClientRect();
-                    x = touch.clientX - rect.left;
-                    y = touch.clientY - rect.top;
-                    console.log("Touch position: (" + x + ", " + y + ")", rect.left, rect.top);
+                    x = (touch.clientX - rect.left) * zoomX;
+                    y = (touch.clientY - rect.top) * zoomX
                 }
                 sizeChanged();
             }
@@ -43,8 +42,9 @@
 
             $(canvas, monitorDiv).on("mousemove touchmove", handleMove);            
 
-            const width = 288;
-            const height = 160;
+            const zoom = 10
+            const width = 288 * zoom;
+            const height = 160 * zoom;
             var x = -1;
             var y = -1;
 
@@ -66,7 +66,7 @@
                 const ctx = canvas.getContext('2d');
 
                 // Set the line width and stroke style
-                ctx.lineWidth = 1;
+                ctx.lineWidth = zoom;
                 ctx.strokeStyle = '#000000';
 
                 // Begin a new path
@@ -81,18 +81,18 @@
 
                 // Draw a pixelated circle
                 ctx.beginPath();
-                ctx.arc(10, 15, 10, 20, 2 * Math.PI);
+                ctx.arc(10*zoom, 15*zoom, 10 * zoom, 20, 2 * Math.PI);
                 ctx.stroke(); 
                 
                 // Draw text
-                ctx.font = '8px "Screen Mono", "Lucida Console", Monaco, monospace';
-                ctx.fillText("Screen " + monitorDiv.clientWidth + " x " + monitorDiv.clientHeight, 20, 40);
-                ctx.fillText("Monitor " + canvas.width + " x " + canvas.height, 20, 50);
-                ctx.fillText("X,y " + Math.round(x) + ", " + Math.round(y), 20, 60);
+                ctx.font = Math.round(8 * zoom) + 'px "Screen Mono", "Lucida Console", Monaco, monospace';
+                ctx.fillText("Screen " + monitorDiv.clientWidth + " x " + monitorDiv.clientHeight, 20 * zoom, 40 * zoom);
+                ctx.fillText("Monitor " + canvas.width + " x " + canvas.height, 20 * zoom, 50 * zoom);
+                ctx.fillText("X,y " + Math.round(x) + ", " + Math.round(y), 20 * zoom, 60 * zoom);
 
                 ctx.fillStyle = "#0000FF";
                 ctx.beginPath();
-                ctx.arc(x, y, 20, 0, 2 * Math.PI);
+                ctx.arc(x, y, 10 * zoom, 0, 2 * Math.PI);
                 ctx.fill();
             }
             new ResizeObserver(sizeChanged).observe(monitorDiv);
@@ -142,8 +142,7 @@
         right: 0;
         top: 0;
         -o-object-fit: contain;
-        object-fit: contain;
-        zoom: 900%
+        object-fit: contain;        
     }    
     @media (orientation: landscape) {
         canvas {
